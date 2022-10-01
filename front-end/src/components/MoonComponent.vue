@@ -19,6 +19,8 @@ let moon = null
 let light = null
 let hemiLight = null
 
+const lightDistance = 100
+
 export default {
   props: ['enableDarkSide'],
   name: 'MoonComponent',
@@ -59,7 +61,7 @@ export default {
       moon.rotation.y += deltaY
       moon.rotation.z += deltaZ
     },
-    translateLight(deltaX, deltaY, deltaZ) {
+    moveLight(deltaX, deltaY, deltaZ) {
       light.position.x += deltaX
       light.position.y += deltaY
       light.position.z += deltaZ
@@ -91,7 +93,7 @@ export default {
     },
     createLights() {
       light = new THREE.DirectionalLight(0xFFFFFF, 1)
-      light.position.set(0, 0,180)
+      light.position.set(0, 0,lightDistance)
       scene.add(light)
 
       if (this.enableRealDarkSide) {
@@ -105,7 +107,14 @@ export default {
     animateMoon() {
       requestAnimationFrame(this.animateMoon)
       this.rotateMoon(0, 0.0005, 0)
-      // this.rotateLight(0, 0.0005, 0)
+      // console.log(`moon.rotation.y: ${moon.rotation.y}`)
+      // console.log(`Math.sin(moon.rotation.y): ${Math.sin(moon.rotation.y)}`)
+      // console.log(`lightDistance * Math.sin(moon.rotation.y): ${lightDistance * Math.sin(moon.rotation.y)}`)
+      this.moveLight(
+          lightDistance * Math.sin(moon.rotation.y), 
+          0, 
+          lightDistance * Math.cos(moon.rotation.y)
+      )
       renderer.render(scene, camera)
     }
   },
