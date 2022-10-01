@@ -27,7 +27,7 @@ export default {
           'lat-err': 2.4,
           'long': -36.6,
           'long-err': 4.6,
-          'depth': 867,
+          'depth': 900,
           'depth-err': 29,
           'assumed': false
         },
@@ -37,7 +37,7 @@ export default {
           'lat-err': 1.7,
           'long': -50.3,
           'long-err': 6.3,
-          'depth': 946,
+          'depth': 1200,
           'depth-err': 22,
           'assumed': false
         },
@@ -47,7 +47,7 @@ export default {
           'lat-err': 94.2,
           'long': -44.7,
           'long-err': 16.4,
-          'depth': 933,
+          'depth': 290,
           'depth-err': 109,
           'assumed': true
         },
