@@ -83,7 +83,9 @@ export default {
       globeObject = new ThreeGlobe()
           .globeImageUrl(this.textureURL)
           .bumpImageUrl(this.displacementURL)
-          .showAtmosphere(false)
+          .showAtmosphere(true)
+          .atmosphereColor("#efecfa")
+          .atmosphereAltitude(0.13)
           .pointAltitude('pointAlt')
           .pointColor('pointColor')
       let globeMaterial = globeObject.globeMaterial()
@@ -99,6 +101,7 @@ export default {
       scene.add(globeObject)
       scene.add(new THREE.AmbientLight(0xbbbbbb))
       scene.add(new THREE.DirectionalLight(0xffffff, 0.6))
+      scene.background = new THREE.Color(0x040d21)
     },
     createCamera() {
       camera = new THREE.PerspectiveCamera()
