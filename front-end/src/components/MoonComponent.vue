@@ -4,13 +4,12 @@
 
 <script>
 import * as THREE from 'three'
-import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls.js'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import ThreeGlobe from 'three-globe'
 
 import moonTexture from '/src/assets/moon-texture.png'
 import moonDisplacement from '/src/assets/moon-displacement.png'
 
-let globeMaterial = null
 let globeObject = null
 let renderer = null
 let scene = null
@@ -27,29 +26,25 @@ export default {
     }
   },
   methods: {
-    getPointsData() {
-      let N = 20
-      return [...Array(N).keys()].map(() => ({
-        lat: (Math.random() - 0.5) * 180,
-        lng: (Math.random() - 0.5) * 360,
-        size: Math.random() / 3,
-        color: 'white'
+    updateMoonquakeLocations(locations) {
+      let pointsData = locations.map((l) => ({
+        lat: l['lat'],
+        lng: l['long'],
+        size: 0.2,
+        color: 'red'
       }))
+      globeObject.pointsData(pointsData)
     },
     animateCycle() {
-      (function animate() {
-        controls.update()
-        renderer.render(scene, camera)
-        requestAnimationFrame(animate)
-      })()
+      controls.update()
+      renderer.render(scene, camera)
+      requestAnimationFrame(this.animateCycle)
     },
     createGlobeObject() {
       globeObject = new ThreeGlobe()
           .globeImageUrl(this.textureURL)
           .bumpImageUrl(this.displacementURL)
-          // .globeMaterial(globeMaterial)
           .showAtmosphere(false)
-          .pointsData(this.getPointsData())
           .pointAltitude('size')
           .pointColor('color')
       let globeMaterial = globeObject.globeMaterial()
@@ -73,10 +68,11 @@ export default {
       camera.position.z = 300
     },
     createControls() {
-      controls = new TrackballControls(camera, renderer.domElement)
-      controls.minDistance = 101
-      controls.rotateSpeed = 5
-      controls.zoomSpeed = 0.8
+      controls = new OrbitControls(
+        camera,
+        renderer.domElement
+      )
+      controls.enablePan = false
     }
   },
   async mounted() {
