@@ -5,6 +5,7 @@
 <script>
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import ThreeGlobe from 'three-globe'
 
 import moonTexture from '/src/assets/moon-texture.png'
 import moonDisplacement from '/src/assets/moon-displacement.png'
@@ -15,6 +16,7 @@ let renderer = null
 let controls = null
 
 let moon = null
+let newMoon = null
 
 let light = null
 let hemiLight = null
@@ -65,6 +67,13 @@ export default {
       light.position.x += deltaX
       light.position.y += deltaY
       light.position.z += deltaZ
+    },
+    createNewMoon() {
+      newMoon = new ThreeGlobe()
+        .globeImageUrl(moonTexture)
+        .bumpImageUrl(moonDisplacement)
+
+      scene.add(newMoon)
     },
     createMoonObject() {
       let geometry = new THREE.SphereGeometry(2,60,60)
@@ -123,9 +132,10 @@ export default {
     this.setupThree()
     this.setupCanvas()
     this.setupCamera(0, 0, 5)
-    this.createMoonObject()
-    this.createLights()
-    this.animateMoon()
+    this.createNewMoon()
+    //this.createMoonObject()
+    //this.createLights()
+    //this.animateMoon()
   }
 }
 </script>
