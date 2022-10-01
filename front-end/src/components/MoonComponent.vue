@@ -4,24 +4,18 @@
 
 <script>
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls.js'
+import ThreeGlobe from 'three-globe'
 
 import moonTexture from '/src/assets/moon-texture.png'
 import moonDisplacement from '/src/assets/moon-displacement.png'
 
+let globeMaterial = null
+let globeObject = null
+let renderer = null
 let scene = null
 let camera = null
-let renderer = null
 let controls = null
-
-let moon = null
-const fullCycle = 5000
-
-let light = null
-let hemiLight = null
-
-const lightDistance = 100
-let lightDirection = 1
 
 export default {
   props: ['enableDarkSide'],
@@ -29,91 +23,69 @@ export default {
   data() {
     return {
       textureURL: moonTexture,
-      displacementURL: moonDisplacement,
-      enableRealDarkSide: null
+      displacementURL: moonDisplacement
     }
   },
   methods: {
-    setupThree() {
-      scene = new THREE.Scene()
-      camera = new THREE.PerspectiveCamera( 
-          75, 
-          window.innerWidth / window.innerHeight, 
-          0.1, 
-          1000
-      )
+    getPointsData() {
+      let N = 20
+      return [...Array(N).keys()].map(() => ({
+        lat: (Math.random() - 0.5) * 180,
+        lng: (Math.random() - 0.5) * 360,
+        size: Math.random() / 3,
+        color: 'white'
+      }))
+    },
+    animateCycle() {
+      (function animate() {
+        controls.update()
+        renderer.render(scene, camera)
+        requestAnimationFrame(animate)
+      })()
+    },
+    createGlobeObject() {
+      globeObject = new ThreeGlobe()
+          .globeImageUrl(this.textureURL)
+          .bumpImageUrl(this.displacementURL)
+          // .globeMaterial(globeMaterial)
+          .showAtmosphere(false)
+          .pointsData(this.getPointsData())
+          .pointAltitude('size')
+          .pointColor('color')
+      let globeMaterial = globeObject.globeMaterial()
+      globeMaterial.bumpScale = 10
+    },
+    createRenderer() {
       renderer = new THREE.WebGLRenderer()
-      controls = new OrbitControls(
-          camera, 
-          renderer.domElement
-      )
-      controls.enablePan = false
-    },
-    setupCanvas() {
       renderer.setSize(window.innerWidth, window.innerHeight)
-      this.$refs.rendered.appendChild(renderer.domElement)
+      document.getElementById('canvasContainer').appendChild(renderer.domElement)
     },
-    setupCamera(x, y, z) {
-      camera.position.x = x
-      camera.position.y = y
-      camera.position.z = z
+    createScene() {
+      scene = new THREE.Scene()
+      scene.add(globeObject)
+      scene.add(new THREE.AmbientLight(0xbbbbbb))
+      scene.add(new THREE.DirectionalLight(0xffffff, 0.6))
     },
-    rotateMoon(deltaX, deltaY, deltaZ) {
-      moon.rotation.x += deltaX
-      moon.rotation.y += deltaY
-      moon.rotation.z += deltaZ
+    createCamera() {
+      camera = new THREE.PerspectiveCamera()
+      camera.aspect = window.innerWidth / window.innerHeight
+      camera.updateProjectionMatrix()
+      camera.position.z = 300
     },
-    createMoonObject() {
-      let geometry = new THREE.SphereGeometry(2,60,60)
-      
-      let textureLoader = new THREE.TextureLoader()
-      let texture = textureLoader.load(this.textureURL)
-      let displacementMap = textureLoader.load(this.displacementURL)
-
-      let material = new THREE.MeshPhongMaterial(
-        {
-          color: 0xffffff ,
-          map: texture ,
-          displacementMap: displacementMap,
-          displacementScale: 0.06,
-          bumpMap: displacementMap,
-          bumpScale: 0.04,
-          reflectivity:0,
-          shininess :0
-        }
-      )
-
-      moon = new THREE.Mesh(geometry, material)
-      moon.rotation.set(0, 0, 0)
-      scene.add(moon)
-    },
-    createLights() {
-      light = new THREE.DirectionalLight(0xFFFFFF, 1)
-      light.position.set(0, 0,lightDistance)
-      scene.add(light)
-
-      if (this.enableRealDarkSide) {
-        hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.1)
-        hemiLight.color.setHSL(0.6, 1, 0.6)
-        hemiLight.groundColor.setHSL(0.095, 1, 0.75)
-        hemiLight.position.set(0, 0, 0)
-        scene.add(hemiLight)
-      }
-    },
-    animateMoon() {
-      requestAnimationFrame(this.animateMoon)
-      this.rotateMoon(0, 0.0005, 0)
-      renderer.render(scene, camera)
+    createControls() {
+      controls = new TrackballControls(camera, renderer.domElement)
+      controls.minDistance = 101
+      controls.rotateSpeed = 5
+      controls.zoomSpeed = 0.8
     }
   },
   async mounted() {
-    this.enableRealDarkSide = this.enableDarkSide
-    this.setupThree()
-    this.setupCanvas()
-    this.setupCamera(0, 0, 5)
-    this.createMoonObject()
-    this.createLights()
-    this.animateMoon()
+    this.createGlobeObject()
+    this.createRenderer()
+    this.createScene()
+    this.createCamera()
+    this.createControls()
+    this.animateCycle()
   }
 }
 </script>
