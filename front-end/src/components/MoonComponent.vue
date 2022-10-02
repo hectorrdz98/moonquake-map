@@ -65,6 +65,7 @@ export default {
     },
     animateCycle() {
       controls.update()
+      this.rotateMoon(0, 0.0005, 0)
       renderer.render(scene, camera)
       requestAnimationFrame(this.animateCycle)
     },
@@ -78,6 +79,11 @@ export default {
       }
       globeObject.pointsData(moonquakeLocations)
       setTimeout(this.animateLocations, 1000)
+    },
+    rotateMoon(deltaX, deltaY, deltaZ) {
+      globeObject.rotation.x += deltaX
+      globeObject.rotation.y += deltaY
+      globeObject.rotation.z += deltaZ
     },
     createGlobeObject() {
       globeObject = new ThreeGlobe()

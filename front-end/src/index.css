@@ -1,3 +1,63 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@900&display=swap');
+
+body {
+    overflow: hidden;
+}
+
+.family-nunito {
+    font-family: 'Nunito', sans-serif;
+}
+
+.family-roboto {
+    font-family: 'Roboto', sans-serif;
+}
+
+.family-open-sans {
+    font-family: 'Open Sans', sans-serif;
+}
+
+.font-bolder {
+    font-weight: bolder;
+}
+
+.bg-moon-gradient {
+    background-image: radial-gradient(
+        circle 976px at 51.2% 51%,  
+        rgba(11,27,103,1) 0%, 
+        rgba(16,66,157,1) 0%, 
+        rgba(11,27,103,1) 17.3%, 
+        rgba(11,27,103,1) 58.8%, 
+        rgba(11,27,103,1) 71.4%, 
+        rgba(16,66,157,1) 100.2%, 
+        rgba(187,187,187,1) 100.2%
+    );
+}
+
+.text-moon-gradient {
+    background: -webkit-linear-gradient(-70deg, #52B69A 0%, #B5E48C 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -webkit-box-decoration-break: clone;
+}
+
+.text-moon-light-green {
+    color: #B5E48C;
+}
+
+.text-moon-green {
+    color: #52B69A;
+}
+
+.bg-moon-light-green {
+    background-color: #B5E48C;
+}
+
+.bg-moon-green {
+    background-color: #52B69A;
+}
