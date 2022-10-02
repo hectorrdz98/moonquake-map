@@ -196,6 +196,7 @@
 
 <script>
 import MoonComponent from "../components/MoonComponent.vue";
+import MoonquakeService from "../services/MoonquakeService";
 
 export default {
   name: 'MoonView',
@@ -226,6 +227,7 @@ export default {
       this.currentMoonquake = null
     },
     async loadMoonquakeLocation() {
+      await MoonquakeService.searchMoonquakes([])
       this.moonquakeLocations = [
         {
           'id': 1,
