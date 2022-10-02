@@ -119,10 +119,18 @@
           </div>
         </div>
       </transition>
-      <div class="absolute bottom-0 right-0 m-4">
-        <div class="p-2 bg-indigo-800 items-center text-indigo-100 leading-none lg:rounded-full flex lg:inline-flex
+      <transition name="fade"
+        enter-active-class="delay-500 duration-500 ease-out"
+        enter-from-class="transform opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="duration-500 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="transform opacity-0">
+        <div v-if="!showEvents"
+          class="absolute bottom-0 right-0 m-4 
+          p-2 bg-indigo-800 items-center text-indigo-100 leading-none rounded-full flex 
           cursor-pointer transition-all duration-300 hover:bg-indigo-600" role="alert"
-          @click="closedMoonquake">
+          @click="showEvents = true">
           <span class="flex rounded-full bg-indigo-500 uppercase px-2 py-1 text-xs font-bold mr-3">
             <i class="fas fa-stream"></i>
           </span>
@@ -133,7 +141,52 @@
             <path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/>
           </svg>
         </div>
-      </div>
+      </transition>
+      <transition name="fade"
+        enter-active-class="delay-500 duration-500 ease-out"
+        enter-from-class="transform opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="duration-500 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="transform opacity-0">
+        <div v-if="showEvents" class="absolute bottom-0 right-0 m-4 flex flex-col justify-start items-end gap-4">
+          <div class="max-h-96 p-4 bg-indigo-800 text-indigo-100 
+            flex justify-start items-start flex-col rounded-2xl">
+            <h1 class="w-full text-2xl text-white/80 font-bolder family-open-sans text-center">
+              Found events
+            </h1>
+            <div class="w-full overflow-y-auto mt-4 h-full bg-indigo-900/80 text-indigo-800 flex justify-start 
+              items-start flex-col rounded-2xl p-4">
+              <div v-for="(l, index) in moonquakeLocations" @click="selectedMoonquake(index)"
+                :class="'w-full flex justify-between items-center gap-4 cursor-pointer ' +
+                'p-2 rounded-2xl transition-all duration-300 ' +
+                (selectedIndex === index ? 'bg-indigo-600/60' : 'hover:bg-indigo-600/60')">
+                <h5 class="text-lg font-normal tracking-tight text-gray-900 dark:text-white text-left">
+                  <i class="fas fa-circle text-xs text-white/80 mr-2"></i>
+                  {{ l['type'] === 'moonquake' ? 'Moonquake' : 'Artificial Impact' }} ({{ l['id'] }})
+                </h5>
+                <div class="text-xs inline-flex items-center font-bold leading-sm uppercase p-2
+                  bg-gunmetal-two text-white/90 rounded-full h-4">
+                  {{ l['year'] }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="p-2 bg-indigo-800 items-center text-indigo-100 rounded-full flex
+            cursor-pointer transition-all duration-300 hover:bg-indigo-600" role="alert"
+            @click="showEvents = false">
+            <span class="flex rounded-full bg-indigo-500 uppercase px-2 py-1 text-xs font-bold mr-3">
+              <i class="fas fa-times"></i>
+            </span>
+            <span class="font-semibold mr-2 text-left flex-auto">
+              Hide events!
+            </span>
+            <svg class="fill-current opacity-75 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+              <path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/>
+            </svg>
+          </div>
+        </div>
+      </transition>
     </section>
   </transition>
   <section class="bg-moon-gradient -z-10 absolute top-0 left-0 w-screen h-screen overflow-hidden">
@@ -153,6 +206,8 @@ export default {
     return {
       moonquakeLocations: [],
       currentMoonquake: null,
+      showEvents: false,
+      selectedIndex: null,
       step: 1
     }
   },
@@ -161,15 +216,227 @@ export default {
       this.step = nextStep
     },
     selectedMoonquake(index) {
+      this.selectedIndex = index
       this.$refs.moonComponent.targetMoonquake(this.moonquakeLocations[index])
       this.currentMoonquake = this.moonquakeLocations[index]
     },
     closedMoonquake() {
+      this.selectedIndex = null
       this.$refs.moonComponent.returnToWholeView()
       this.currentMoonquake = null
     },
     async loadMoonquakeLocation() {
       this.moonquakeLocations = [
+        {
+          'id': 1,
+          'side': 'N',
+          'type': 'moonquake',
+          'sub-type': 'Shallow',
+          'year': 2022,
+          'lat': -15.7,
+          'lat-err': 2.4,
+          'long': -36.6,
+          'long-err': 4.6,
+          'depth': 900,
+          'depth-err': 29,
+          'assumed': false
+        },
+        {
+          'id': 1,
+          'side': 'N',
+          'type': 'moonquake',
+          'sub-type': 'Shallow',
+          'year': 2021,
+          'lat': -2.9,
+          'lat-err': 1.7,
+          'long': -50.3,
+          'long-err': 6.3,
+          'depth': 1200,
+          'depth-err': 22,
+          'assumed': false
+        },
+        {
+          'id': 2,
+          'side': 'N',
+          'type': 'artificial-impact',
+          'sub-type': 'S-IVB',
+          'year': 2022,
+          'lat': 1.1,
+          'lat-err': 94.2,
+          'long': -44.7,
+          'long-err': 16.4,
+          'depth': 290,
+          'depth-err': 109,
+          'assumed': true
+        },
+        {
+          'id': 3,
+          'side': 'N',
+          'type': 'moonquake',
+          'sub-type': 'Deep',
+          'year': 2020,
+          'lat': 43.5,
+          'lat-err': 2.9,
+          'long': 55.5,
+          'long-err': 9.5,
+          'depth': 844,
+          'depth-err': 33,
+          'assumed': false
+        },
+        {
+          'id': 4,
+          'side': 'F',
+          'type': 'moonquake',
+          'sub-type': 'Shallow',
+          'year': 2022,
+          'lat': 25,
+          'lat-err': 1.7,
+          'long': 53.2,
+          'long-err': 8,
+          'depth': 893,
+          'depth-err': 27,
+          'assumed': false
+        },
+        {
+          'id': 1,
+          'side': 'N',
+          'type': 'moonquake',
+          'sub-type': 'Shallow',
+          'year': 2022,
+          'lat': -15.7,
+          'lat-err': 2.4,
+          'long': -36.6,
+          'long-err': 4.6,
+          'depth': 900,
+          'depth-err': 29,
+          'assumed': false
+        },
+        {
+          'id': 1,
+          'side': 'N',
+          'type': 'moonquake',
+          'sub-type': 'Shallow',
+          'year': 2021,
+          'lat': -2.9,
+          'lat-err': 1.7,
+          'long': -50.3,
+          'long-err': 6.3,
+          'depth': 1200,
+          'depth-err': 22,
+          'assumed': false
+        },
+        {
+          'id': 2,
+          'side': 'N',
+          'type': 'artificial-impact',
+          'sub-type': 'S-IVB',
+          'year': 2022,
+          'lat': 1.1,
+          'lat-err': 94.2,
+          'long': -44.7,
+          'long-err': 16.4,
+          'depth': 290,
+          'depth-err': 109,
+          'assumed': true
+        },
+        {
+          'id': 3,
+          'side': 'N',
+          'type': 'moonquake',
+          'sub-type': 'Deep',
+          'year': 2020,
+          'lat': 43.5,
+          'lat-err': 2.9,
+          'long': 55.5,
+          'long-err': 9.5,
+          'depth': 844,
+          'depth-err': 33,
+          'assumed': false
+        },
+        {
+          'id': 4,
+          'side': 'F',
+          'type': 'moonquake',
+          'sub-type': 'Shallow',
+          'year': 2022,
+          'lat': 25,
+          'lat-err': 1.7,
+          'long': 53.2,
+          'long-err': 8,
+          'depth': 893,
+          'depth-err': 27,
+          'assumed': false
+        },
+        {
+          'id': 1,
+          'side': 'N',
+          'type': 'moonquake',
+          'sub-type': 'Shallow',
+          'year': 2022,
+          'lat': -15.7,
+          'lat-err': 2.4,
+          'long': -36.6,
+          'long-err': 4.6,
+          'depth': 900,
+          'depth-err': 29,
+          'assumed': false
+        },
+        {
+          'id': 1,
+          'side': 'N',
+          'type': 'moonquake',
+          'sub-type': 'Shallow',
+          'year': 2021,
+          'lat': -2.9,
+          'lat-err': 1.7,
+          'long': -50.3,
+          'long-err': 6.3,
+          'depth': 1200,
+          'depth-err': 22,
+          'assumed': false
+        },
+        {
+          'id': 2,
+          'side': 'N',
+          'type': 'artificial-impact',
+          'sub-type': 'S-IVB',
+          'year': 2022,
+          'lat': 1.1,
+          'lat-err': 94.2,
+          'long': -44.7,
+          'long-err': 16.4,
+          'depth': 290,
+          'depth-err': 109,
+          'assumed': true
+        },
+        {
+          'id': 3,
+          'side': 'N',
+          'type': 'moonquake',
+          'sub-type': 'Deep',
+          'year': 2020,
+          'lat': 43.5,
+          'lat-err': 2.9,
+          'long': 55.5,
+          'long-err': 9.5,
+          'depth': 844,
+          'depth-err': 33,
+          'assumed': false
+        },
+        {
+          'id': 4,
+          'side': 'F',
+          'type': 'moonquake',
+          'sub-type': 'Shallow',
+          'year': 2022,
+          'lat': 25,
+          'lat-err': 1.7,
+          'long': 53.2,
+          'long-err': 8,
+          'depth': 893,
+          'depth-err': 27,
+          'assumed': false
+        },
         {
           'id': 1,
           'side': 'N',
