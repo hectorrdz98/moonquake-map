@@ -19,7 +19,8 @@ let controls = null
 let moonquakeLocations = []
 let moonquakeSphereLocations = []
 
-const colorInterpolator = t => `rgba(214, 40, 40, ${1-t})`
+const moonquakeColorInterpolator = t => `rgba(214, 40, 40, ${1-t})`
+const artificialImpactColorInterpolator = t => `rgba(28, 143, 217, ${1-t})`
 
 export default {
   props: ['enableDarkSide'],
@@ -55,7 +56,8 @@ export default {
           propagationSpeed: 10,
           repeatPeriod: 500
         }
-      ])
+      ], moonquakeLocation['type'] === 'moonquake' ? 
+          moonquakeColorInterpolator : artificialImpactColorInterpolator)
     },
     returnToWholeView() {
       globeObject.rotation.x = 0
@@ -72,7 +74,7 @@ export default {
       this.toggleControls()
       this.rotateMoon(0, 0, 0, true)
 
-      this.setupRings([])
+      this.setupRings([], moonquakeColorInterpolator)
     },
     disableControls() {
       controls.zoomSpeed = 0
@@ -108,7 +110,7 @@ export default {
       globeObject.pointsData(moonquakeLocations)
       globeObject.objectsData(moonquakeSphereLocations)
       
-      this.setupRings([])
+      this.setupRings([], moonquakeColorInterpolator())
     },
     getDepthColor(depth) {
       let depthMargin = depth % 300
@@ -150,9 +152,9 @@ export default {
         globeObject.rotation.z += deltaZ
       }
     },
-    setupRings(ringsData) {
+    setupRings(ringsData, interpolator) {
       globeObject.ringsData(ringsData)
-        .ringColor(() => colorInterpolator)
+        .ringColor(() => interpolator)
         .ringMaxRadius('maxR')
         .ringPropagationSpeed('propagationSpeed')
         .ringRepeatPeriod('repeatPeriod')

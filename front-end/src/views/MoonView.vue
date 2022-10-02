@@ -51,9 +51,15 @@
         <div v-if="currentMoonquake != null" class="absolute top-1/2 left-1/2 m-4 overflow-hidden rounded-lg">
           <div class="block max-w-sm border shadow-md bg-gray-800 border-gray-700">
             <div class="relative px-6 pt-6 flex justify-between items-center">
-              <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                ID: {{ currentMoonquake['id'] }}
-              </h5>
+              <div class="mb-2 flex justify-start items-center">
+                <h5 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                  ID: {{ currentMoonquake['id'] }}
+                </h5>
+                <div class="text-xs inline-flex items-center font-bold leading-sm uppercase p-2
+                  bg-gunmetal-two text-white/90 rounded-full ml-4 h-4">
+                  {{ currentMoonquake['year'] }}
+                </div>
+              </div>
               <div class="absolute top-0 right-0 h-40 w-40 -mr-20 -mt-20 bg-gunmetal-two rounded-full">
                 <template v-if="currentMoonquake['side'] === 'N'">
                   <span class="absolute bottom-0 left-0 ml-10 mb-8 text-white/80 text-2xl">
@@ -169,6 +175,7 @@ export default {
           'side': 'N',
           'type': 'moonquake',
           'sub-type': 'Shallow',
+          'year': 2022,
           'lat': -15.7,
           'lat-err': 2.4,
           'long': -36.6,
@@ -182,6 +189,7 @@ export default {
           'side': 'N',
           'type': 'moonquake',
           'sub-type': 'Shallow',
+          'year': 2021,
           'lat': -2.9,
           'lat-err': 1.7,
           'long': -50.3,
@@ -195,6 +203,7 @@ export default {
           'side': 'N',
           'type': 'artificial-impact',
           'sub-type': 'S-IVB',
+          'year': 2022,
           'lat': 1.1,
           'lat-err': 94.2,
           'long': -44.7,
@@ -208,6 +217,7 @@ export default {
           'side': 'N',
           'type': 'moonquake',
           'sub-type': 'Deep',
+          'year': 2020,
           'lat': 43.5,
           'lat-err': 2.9,
           'long': 55.5,
@@ -221,6 +231,7 @@ export default {
           'side': 'F',
           'type': 'moonquake',
           'sub-type': 'Shallow',
+          'year': 2022,
           'lat': 25,
           'lat-err': 1.7,
           'long': 53.2,
