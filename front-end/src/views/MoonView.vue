@@ -35,6 +35,16 @@
     leave-from-class="opacity-100"
     leave-to-class="transform opacity-0">
     <section v-if="step === 2">
+      <div class="absolute top-0 left-0 m-4">
+        <button @click="toggleRotation"
+          class="p-2 bg-indigo-800 items-center justify-center text-indigo-100 leading-none rounded-full flex 
+          cursor-pointer transition-all duration-300 hover:bg-indigo-600">
+          <i class="fas fa-sync-alt"></i>
+          <span class="font-semibold ml-2 text-left">
+            {{ rotationDisabled ? 'Enable rotation' : 'Disable rotation' }}
+          </span>
+        </button>
+      </div>
       <div class="absolute bottom-0 left-0 m-4">
 <!--        <button @click="this.selectedMoonquake(Math.floor(Math.random() * this.moonquakeLocations.length))"-->
 <!--          class="bg-white hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">-->
@@ -156,7 +166,7 @@
               Found events
             </h1>
             <div class="w-full overflow-y-auto mt-4 h-full bg-indigo-900/80 text-indigo-800 flex justify-start 
-              items-start flex-col rounded-2xl p-4">
+              items-start flex-col rounded-2xl p-4 custom-overflow">
               <div v-for="(l, index) in moonquakeLocations" @click="selectedMoonquake(index)"
                 :class="'w-full flex justify-between items-center gap-4 cursor-pointer ' +
                 'p-2 rounded-2xl transition-all duration-300 ' +
@@ -209,12 +219,17 @@ export default {
       currentMoonquake: null,
       showEvents: false,
       selectedIndex: null,
+      rotationDisabled: false,
       step: 1
     }
   },
   methods: {
     changeStep(nextStep) {
       this.step = nextStep
+    },
+    toggleRotation() {
+      this.rotationDisabled = !this.rotationDisabled
+      this.$refs.moonComponent.setShouldRotate(!this.rotationDisabled)
     },
     selectedMoonquake(index) {
       this.selectedIndex = index

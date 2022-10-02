@@ -76,6 +76,9 @@ export default {
 
       this.setupRings([], moonquakeColorInterpolator)
     },
+    setShouldRotate(shouldRotate) {
+      this.shouldRotate = shouldRotate
+    },
     disableControls() {
       controls.zoomSpeed = 0
       controls.rotateSpeed = 0

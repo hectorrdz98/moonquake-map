@@ -65,3 +65,19 @@ body {
 .bg-gunmetal-two {
     background-color: #405572;
 }
+
+.custom-overflow::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent;
+}
+
+.custom-overflow::-webkit-scrollbar {
+    width: 8px;
+    background-color: transparent;
+}
+
+.custom-overflow::-webkit-scrollbar-thumb {
+    height: 30px;
+    border-radius: 10px;
+    background-color: #040d21;
+}
