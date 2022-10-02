@@ -45,11 +45,25 @@
           </span>
         </button>
       </div>
-      <div class="absolute bottom-0 left-0 m-4">
-<!--        <button @click="this.selectedMoonquake(Math.floor(Math.random() * this.moonquakeLocations.length))"-->
-<!--          class="bg-white hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">-->
-<!--          Show random!-->
-<!--        </button>-->
+      <div class="absolute bottom-0 left-0 m-4 flex justify-start items-center gap-4">
+        <select @change="loadMoonquakeLocation" v-model="filters.type"
+          class="p-2 bg-indigo-800 text-indigo-100 font-semibold rounded-lg focus-visible:outline-0">
+          <option selected :value="null">Select a type</option>
+          <option value="moonquake">Moonquake</option>
+          <option value="artificial-impact">Artificial Impact</option>
+        </select>
+        <select @change="loadMoonquakeLocation" v-model="filters.subType"
+          class="p-2 bg-indigo-800 text-indigo-100 font-semibold rounded-lg focus-visible:outline-0">
+          <option selected :value="null">Select a subtype</option>
+          <option value="Shallow">Shallow</option>
+          <option value="Deep">Deep</option>
+        </select>
+        <select v-if="moonquakeLocations.length > 0"
+          @change="loadMoonquakeLocation" v-model="filters.year"
+          class="p-2 bg-indigo-800 text-indigo-100 font-semibold rounded-lg focus-visible:outline-0">
+          <option selected :value="null">Select a year</option>
+          <option v-for="year in [...new Set(moonquakeLocations.map(item => item['year']))]" :value="year">{{ year }}</option>
+        </select>
       </div>
       <transition name="fade"
         enter-active-class="duration-500 ease-out"
@@ -199,6 +213,21 @@
       </transition>
     </section>
   </transition>
+  <transition name="fade"
+    enter-active-class="delay-500 duration-500 ease-out"
+    enter-from-class="transform opacity-0"
+    enter-to-class="opacity-100"
+    leave-active-class="duration-500 ease-in"
+    leave-from-class="opacity-100"
+    leave-to-class="transform opacity-0">
+    <section v-if="loading" 
+      class="absolute top-0 left-0 w-screen h-screen bg-gray-900/75 flex justify-center 
+      items-center flex-col hide-section transition-all">
+      <h1 class="text-9xl text-moon-gradient font-bolder family-open-sans">
+        🦆
+      </h1>
+    </section>
+  </transition>
   <section class="bg-moon-gradient -z-10 absolute top-0 left-0 w-screen h-screen overflow-hidden">
     <MoonComponent ref="moonComponent" :enable-dark-side="true" />
   </section>
@@ -216,16 +245,25 @@ export default {
   data() {
     return {
       moonquakeLocations: [],
+      filters: {
+        type: null,
+        subType: null,
+        year: null
+      },
       currentMoonquake: null,
       showEvents: false,
       selectedIndex: null,
       rotationDisabled: false,
+      loading: false,
       step: 1
     }
   },
   methods: {
-    changeStep(nextStep) {
+    async changeStep(nextStep) {
+      this.loading = true
       this.step = nextStep
+      await this.loadMoonquakeLocation()
+      this.loading = false
     },
     toggleRotation() {
       this.rotationDisabled = !this.rotationDisabled
@@ -243,10 +281,17 @@ export default {
       this.currentMoonquake = null
     },
     async loadMoonquakeLocation() {
-      let getMoonquakesResponse = await MoonquakeService.searchMoonquakes([])
+      let payload = {
+        type: this.filters.type,
+        sub_type: this.filters.subType,
+        year: this.filters.year,
+      }
+      let getMoonquakesResponse = await MoonquakeService.searchMoonquakes(payload)
       if (getMoonquakesResponse.status === 200) {
-        this.moonquakeLocations = getMoonquakesResponse.data.map(l => {
-          return {
+        this.moonquakeLocations = []
+        for (let i = 0; i < getMoonquakesResponse.data.length; ++i) {
+          let l = getMoonquakesResponse.data[i]
+          this.moonquakeLocations.push({
             'id': l[0],
             'side': l[7] !== '' ? l[7] : 'N',
             'type': l[5],
@@ -259,14 +304,12 @@ export default {
             'depth': l[9] !== '' ? parseFloat(l[9]) : null,
             'depth-err': l[10] !== '' ? parseFloat(l[10]) : null,
             'assumed': l[11] === 'Y'
-          }
-        })
+          })
+          this.$refs.moonComponent.updateMoonquakeLocations(this.moonquakeLocations)
+        }
       }
-      this.$refs.moonComponent.updateMoonquakeLocations(this.moonquakeLocations)
     }
   },
-  async mounted() {
-    await this.loadMoonquakeLocation()
-  }
+  async mounted() {}
 }
 </script>
