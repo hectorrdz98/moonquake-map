@@ -35,9 +35,16 @@
     leave-from-class="opacity-100"
     leave-to-class="transform opacity-0">
     <section v-if="step === 2">
+      <div class="absolute bottom-0 left-0 m-4">
+        <button @click="this.selectedMoonquake(Math.floor(Math.random() * this.moonquakeLocations.length))"
+          class="bg-white hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+          Show random!
+        </button>
+      </div>
       <div class="absolute bottom-0 right-0 m-4">
         <div class="p-2 bg-indigo-800 items-center text-indigo-100 leading-none lg:rounded-full flex lg:inline-flex
-          cursor-pointer transition-all duration-300 hover:bg-indigo-600" role="alert">
+          cursor-pointer transition-all duration-300 hover:bg-indigo-600" role="alert"
+          @click="closedMoonquake">
           <span class="flex rounded-full bg-indigo-500 uppercase px-2 py-1 text-xs font-bold mr-3">
             <i class="fas fa-stream"></i>
           </span>
@@ -74,10 +81,16 @@ export default {
     changeStep(nextStep) {
       this.step = nextStep
     },
+    selectedMoonquake(index) {
+      this.$refs.moonComponent.targetMoonquake(this.moonquakeLocations[index])
+    },
+    closedMoonquake() {
+      this.$refs.moonComponent.returnToWholeView()
+    },
     async loadMoonquakeLocation() {
       this.moonquakeLocations = [
         {
-          'id': 0,
+          'id': 1,
           'side': 'N',
           'lat': -15.7,
           'lat-err': 2.4,
