@@ -41,6 +41,78 @@
           Show random!
         </button>
       </div>
+      <transition name="fade"
+        enter-active-class="duration-500 ease-out"
+        enter-from-class="transform opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="duration-500 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="transform opacity-0">
+        <div v-if="currentMoonquake != null" class="absolute top-1/2 left-1/2 m-4 overflow-hidden rounded-lg">
+          <div class="block max-w-sm border shadow-md bg-gray-800 border-gray-700">
+            <div class="relative px-6 pt-6 flex justify-between items-center">
+              <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                ID: {{ currentMoonquake['id'] }}
+              </h5>
+              <div class="absolute top-0 right-0 h-40 w-40 -mr-20 -mt-20 bg-gunmetal-two rounded-full">
+                <template v-if="currentMoonquake['side'] === 'N'">
+                  <span class="absolute bottom-0 left-0 ml-10 mb-8 text-white/80 text-2xl">
+                    <i class="fas fa-moon"></i>
+                  </span>
+                </template>
+                <template v-else-if="currentMoonquake['side'] === 'F'">
+                  <span class="absolute bottom-0 left-0 ml-10 mb-8 text-black/70 text-2xl">
+                    <i class="fas fa-moon"></i>
+                  </span>
+                </template>
+              </div>
+            </div>
+            <p class="mb-6 px-6 font-normal text-gray-700 dark:text-gray-400">
+              <template v-if="currentMoonquake['lat-err'] !== ''">
+                Lat: {{ currentMoonquake['lat'] }} (± {{ currentMoonquake['lat-err'] }})<br>
+              </template>
+              <template v-else>
+                Lat: {{ currentMoonquake['lat'] }}<br>
+              </template>
+              <template v-if="currentMoonquake['long-err'] !== ''">
+                Lat: {{ currentMoonquake['long'] }} (± {{ currentMoonquake['long-err'] }})<br>
+              </template>
+              <template v-else>
+                Lat: {{ currentMoonquake['long'] }}<br>
+              </template>
+              Depth: {{ currentMoonquake['depth'] }}<br>
+            </p>
+            <div class="px-6 pb-6 flex items-center justify-start">
+              <template v-if="currentMoonquake['type'] === 'moonquake'">
+                <div class="text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 
+                  bg-red-200 text-red-700 rounded-full mr-4 h-8">
+                  <span class="material-symbols-outlined mr-2">
+                    blur_circular
+                  </span>
+                  Moonquake
+                </div>
+                <div class="text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 
+                  bg-red-100 text-red-500 rounded-full h-8">
+                  {{ currentMoonquake['sub-type'] }}
+                </div>
+              </template>
+              <template v-else-if="currentMoonquake['type'] === 'artificial-impact'">
+                <div class="text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 
+                  bg-blue-200 text-blue-700 rounded-full mr-4 h-8">
+                  <span class="material-symbols-outlined mr-2">
+                    precision_manufacturing
+                  </span>
+                  Artificial Impact
+                </div>
+                <div class="text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 
+                  bg-blue-100 text-blue-500 rounded-full h-8">
+                  {{ currentMoonquake['sub-type'] }}
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+      </transition>
       <div class="absolute bottom-0 right-0 m-4">
         <div class="p-2 bg-indigo-800 items-center text-indigo-100 leading-none lg:rounded-full flex lg:inline-flex
           cursor-pointer transition-all duration-300 hover:bg-indigo-600" role="alert"
@@ -74,6 +146,7 @@ export default {
   data() {
     return {
       moonquakeLocations: [],
+      currentMoonquake: null,
       step: 1
     }
   },
@@ -83,15 +156,19 @@ export default {
     },
     selectedMoonquake(index) {
       this.$refs.moonComponent.targetMoonquake(this.moonquakeLocations[index])
+      this.currentMoonquake = this.moonquakeLocations[index]
     },
     closedMoonquake() {
       this.$refs.moonComponent.returnToWholeView()
+      this.currentMoonquake = null
     },
     async loadMoonquakeLocation() {
       this.moonquakeLocations = [
         {
           'id': 1,
           'side': 'N',
+          'type': 'moonquake',
+          'sub-type': 'Shallow',
           'lat': -15.7,
           'lat-err': 2.4,
           'long': -36.6,
@@ -103,6 +180,8 @@ export default {
         {
           'id': 1,
           'side': 'N',
+          'type': 'moonquake',
+          'sub-type': 'Shallow',
           'lat': -2.9,
           'lat-err': 1.7,
           'long': -50.3,
@@ -114,6 +193,8 @@ export default {
         {
           'id': 2,
           'side': 'N',
+          'type': 'artificial-impact',
+          'sub-type': 'S-IVB',
           'lat': 1.1,
           'lat-err': 94.2,
           'long': -44.7,
@@ -125,6 +206,8 @@ export default {
         {
           'id': 3,
           'side': 'N',
+          'type': 'moonquake',
+          'sub-type': 'Deep',
           'lat': 43.5,
           'lat-err': 2.9,
           'long': 55.5,
@@ -135,7 +218,9 @@ export default {
         },
         {
           'id': 4,
-          'side': 'N',
+          'side': 'F',
+          'type': 'moonquake',
+          'sub-type': 'Shallow',
           'lat': 25,
           'lat-err': 1.7,
           'long': 53.2,

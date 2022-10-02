@@ -39,7 +39,7 @@ export default {
       globeObject.rotation.y = 0
       globeObject.rotation.z = 0
       
-      let {x, y, z} = globeObject.getCoords(moonquakeLocation['lat'], moonquakeLocation['long'], 2)
+      let {x, y, z} = globeObject.getCoords(moonquakeLocation['lat'], moonquakeLocation['long'], 1.2)
       camera.position.x = x
       camera.position.y = y
       camera.position.z = z
@@ -64,7 +64,7 @@ export default {
       
       camera.position.x = 0
       camera.position.y = 0
-      camera.position.z = 250
+      camera.position.z = 300
       
       camera.lookAt(0, 0, 0)
       camera.updateProjectionMatrix()
@@ -180,16 +180,13 @@ export default {
       scene.add(new THREE.AmbientLight(0xbbbbbb))
       scene.add(new THREE.DirectionalLight(0xffffff, 0.6))
       scene.background = new THREE.Color(0x040d21)
-      
-      let axesHelper = new THREE.AxesHelper(200)
-      scene.add(axesHelper)
     },
     createCamera() {
       camera = new THREE.PerspectiveCamera()
       camera.aspect = window.innerWidth / window.innerHeight
       camera.position.x = 0
       camera.position.y = 0
-      camera.position.z = 250
+      camera.position.z = 300
       camera.lookAt(0, 0, 0)
       camera.updateProjectionMatrix()
     },
