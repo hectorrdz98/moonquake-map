@@ -104,10 +104,10 @@
                 Lat: {{ currentMoonquake['lat'] }}<br>
               </template>
               <template v-if="currentMoonquake['long-err'] != null">
-                Lat: {{ currentMoonquake['long'] }} (± {{ currentMoonquake['long-err'] }})<br>
+                Long: {{ currentMoonquake['long'] }} (± {{ currentMoonquake['long-err'] }})<br>
               </template>
               <template v-else>
-                Lat: {{ currentMoonquake['long'] }}<br>
+                Long: {{ currentMoonquake['long'] }}<br>
               </template>
               Depth: {{ currentMoonquake['depth'] }}<br>
             </p>
