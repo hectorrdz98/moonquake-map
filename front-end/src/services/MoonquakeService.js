@@ -7,10 +7,5 @@ export default {
             .map(q => `${q}=${encodeURIComponent(payload[q])}`)
             .join('&')
         return await axios.get(`moonquakes/show?${query}`)
-            .then((response) => {
-                return response.data;
-            }).catch((err) => {
-                console.log(`There was an error in the request: ${err}`)
-            });
     }
 }

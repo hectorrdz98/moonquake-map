@@ -36,10 +36,10 @@
     leave-to-class="transform opacity-0">
     <section v-if="step === 2">
       <div class="absolute bottom-0 left-0 m-4">
-        <button @click="this.selectedMoonquake(Math.floor(Math.random() * this.moonquakeLocations.length))"
-          class="bg-white hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
-          Show random!
-        </button>
+<!--        <button @click="this.selectedMoonquake(Math.floor(Math.random() * this.moonquakeLocations.length))"-->
+<!--          class="bg-white hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">-->
+<!--          Show random!-->
+<!--        </button>-->
       </div>
       <transition name="fade"
         enter-active-class="duration-500 ease-out"
@@ -74,13 +74,13 @@
               </div>
             </div>
             <p class="mb-6 px-6 font-normal text-gray-700 dark:text-gray-400">
-              <template v-if="currentMoonquake['lat-err'] !== ''">
+              <template v-if="currentMoonquake['lat-err'] != null">
                 Lat: {{ currentMoonquake['lat'] }} (± {{ currentMoonquake['lat-err'] }})<br>
               </template>
               <template v-else>
                 Lat: {{ currentMoonquake['lat'] }}<br>
               </template>
-              <template v-if="currentMoonquake['long-err'] !== ''">
+              <template v-if="currentMoonquake['long-err'] != null">
                 Lat: {{ currentMoonquake['long'] }} (± {{ currentMoonquake['long-err'] }})<br>
               </template>
               <template v-else>
@@ -174,7 +174,7 @@
           </div>
           <div class="p-2 bg-indigo-800 items-center text-indigo-100 rounded-full flex
             cursor-pointer transition-all duration-300 hover:bg-indigo-600" role="alert"
-            @click="showEvents = false">
+            @click="closedMoonquake">
             <span class="flex rounded-full bg-indigo-500 uppercase px-2 py-1 text-xs font-bold mr-3">
               <i class="fas fa-times"></i>
             </span>
@@ -222,294 +222,31 @@ export default {
       this.currentMoonquake = this.moonquakeLocations[index]
     },
     closedMoonquake() {
+      this.showEvents = false
       this.selectedIndex = null
       this.$refs.moonComponent.returnToWholeView()
       this.currentMoonquake = null
     },
     async loadMoonquakeLocation() {
-      await MoonquakeService.searchMoonquakes([])
-      this.moonquakeLocations = [
-        {
-          'id': 1,
-          'side': 'N',
-          'type': 'moonquake',
-          'sub-type': 'Shallow',
-          'year': 2022,
-          'lat': -15.7,
-          'lat-err': 2.4,
-          'long': -36.6,
-          'long-err': 4.6,
-          'depth': 900,
-          'depth-err': 29,
-          'assumed': false
-        },
-        {
-          'id': 1,
-          'side': 'N',
-          'type': 'moonquake',
-          'sub-type': 'Shallow',
-          'year': 2021,
-          'lat': -2.9,
-          'lat-err': 1.7,
-          'long': -50.3,
-          'long-err': 6.3,
-          'depth': 1200,
-          'depth-err': 22,
-          'assumed': false
-        },
-        {
-          'id': 2,
-          'side': 'N',
-          'type': 'artificial-impact',
-          'sub-type': 'S-IVB',
-          'year': 2022,
-          'lat': 1.1,
-          'lat-err': 94.2,
-          'long': -44.7,
-          'long-err': 16.4,
-          'depth': 290,
-          'depth-err': 109,
-          'assumed': true
-        },
-        {
-          'id': 3,
-          'side': 'N',
-          'type': 'moonquake',
-          'sub-type': 'Deep',
-          'year': 2020,
-          'lat': 43.5,
-          'lat-err': 2.9,
-          'long': 55.5,
-          'long-err': 9.5,
-          'depth': 844,
-          'depth-err': 33,
-          'assumed': false
-        },
-        {
-          'id': 4,
-          'side': 'F',
-          'type': 'moonquake',
-          'sub-type': 'Shallow',
-          'year': 2022,
-          'lat': 25,
-          'lat-err': 1.7,
-          'long': 53.2,
-          'long-err': 8,
-          'depth': 893,
-          'depth-err': 27,
-          'assumed': false
-        },
-        {
-          'id': 1,
-          'side': 'N',
-          'type': 'moonquake',
-          'sub-type': 'Shallow',
-          'year': 2022,
-          'lat': -15.7,
-          'lat-err': 2.4,
-          'long': -36.6,
-          'long-err': 4.6,
-          'depth': 900,
-          'depth-err': 29,
-          'assumed': false
-        },
-        {
-          'id': 1,
-          'side': 'N',
-          'type': 'moonquake',
-          'sub-type': 'Shallow',
-          'year': 2021,
-          'lat': -2.9,
-          'lat-err': 1.7,
-          'long': -50.3,
-          'long-err': 6.3,
-          'depth': 1200,
-          'depth-err': 22,
-          'assumed': false
-        },
-        {
-          'id': 2,
-          'side': 'N',
-          'type': 'artificial-impact',
-          'sub-type': 'S-IVB',
-          'year': 2022,
-          'lat': 1.1,
-          'lat-err': 94.2,
-          'long': -44.7,
-          'long-err': 16.4,
-          'depth': 290,
-          'depth-err': 109,
-          'assumed': true
-        },
-        {
-          'id': 3,
-          'side': 'N',
-          'type': 'moonquake',
-          'sub-type': 'Deep',
-          'year': 2020,
-          'lat': 43.5,
-          'lat-err': 2.9,
-          'long': 55.5,
-          'long-err': 9.5,
-          'depth': 844,
-          'depth-err': 33,
-          'assumed': false
-        },
-        {
-          'id': 4,
-          'side': 'F',
-          'type': 'moonquake',
-          'sub-type': 'Shallow',
-          'year': 2022,
-          'lat': 25,
-          'lat-err': 1.7,
-          'long': 53.2,
-          'long-err': 8,
-          'depth': 893,
-          'depth-err': 27,
-          'assumed': false
-        },
-        {
-          'id': 1,
-          'side': 'N',
-          'type': 'moonquake',
-          'sub-type': 'Shallow',
-          'year': 2022,
-          'lat': -15.7,
-          'lat-err': 2.4,
-          'long': -36.6,
-          'long-err': 4.6,
-          'depth': 900,
-          'depth-err': 29,
-          'assumed': false
-        },
-        {
-          'id': 1,
-          'side': 'N',
-          'type': 'moonquake',
-          'sub-type': 'Shallow',
-          'year': 2021,
-          'lat': -2.9,
-          'lat-err': 1.7,
-          'long': -50.3,
-          'long-err': 6.3,
-          'depth': 1200,
-          'depth-err': 22,
-          'assumed': false
-        },
-        {
-          'id': 2,
-          'side': 'N',
-          'type': 'artificial-impact',
-          'sub-type': 'S-IVB',
-          'year': 2022,
-          'lat': 1.1,
-          'lat-err': 94.2,
-          'long': -44.7,
-          'long-err': 16.4,
-          'depth': 290,
-          'depth-err': 109,
-          'assumed': true
-        },
-        {
-          'id': 3,
-          'side': 'N',
-          'type': 'moonquake',
-          'sub-type': 'Deep',
-          'year': 2020,
-          'lat': 43.5,
-          'lat-err': 2.9,
-          'long': 55.5,
-          'long-err': 9.5,
-          'depth': 844,
-          'depth-err': 33,
-          'assumed': false
-        },
-        {
-          'id': 4,
-          'side': 'F',
-          'type': 'moonquake',
-          'sub-type': 'Shallow',
-          'year': 2022,
-          'lat': 25,
-          'lat-err': 1.7,
-          'long': 53.2,
-          'long-err': 8,
-          'depth': 893,
-          'depth-err': 27,
-          'assumed': false
-        },
-        {
-          'id': 1,
-          'side': 'N',
-          'type': 'moonquake',
-          'sub-type': 'Shallow',
-          'year': 2022,
-          'lat': -15.7,
-          'lat-err': 2.4,
-          'long': -36.6,
-          'long-err': 4.6,
-          'depth': 900,
-          'depth-err': 29,
-          'assumed': false
-        },
-        {
-          'id': 1,
-          'side': 'N',
-          'type': 'moonquake',
-          'sub-type': 'Shallow',
-          'year': 2021,
-          'lat': -2.9,
-          'lat-err': 1.7,
-          'long': -50.3,
-          'long-err': 6.3,
-          'depth': 1200,
-          'depth-err': 22,
-          'assumed': false
-        },
-        {
-          'id': 2,
-          'side': 'N',
-          'type': 'artificial-impact',
-          'sub-type': 'S-IVB',
-          'year': 2022,
-          'lat': 1.1,
-          'lat-err': 94.2,
-          'long': -44.7,
-          'long-err': 16.4,
-          'depth': 290,
-          'depth-err': 109,
-          'assumed': true
-        },
-        {
-          'id': 3,
-          'side': 'N',
-          'type': 'moonquake',
-          'sub-type': 'Deep',
-          'year': 2020,
-          'lat': 43.5,
-          'lat-err': 2.9,
-          'long': 55.5,
-          'long-err': 9.5,
-          'depth': 844,
-          'depth-err': 33,
-          'assumed': false
-        },
-        {
-          'id': 4,
-          'side': 'F',
-          'type': 'moonquake',
-          'sub-type': 'Shallow',
-          'year': 2022,
-          'lat': 25,
-          'lat-err': 1.7,
-          'long': 53.2,
-          'long-err': 8,
-          'depth': 893,
-          'depth-err': 27,
-          'assumed': false
-        }
-      ]
+      let getMoonquakesResponse = await MoonquakeService.searchMoonquakes([])
+      if (getMoonquakesResponse.status === 200) {
+        this.moonquakeLocations = getMoonquakesResponse.data.map(l => {
+          return {
+            'id': l[0],
+            'side': l[7] !== '' ? l[7] : 'N',
+            'type': l[5],
+            'sub-type': l[6],
+            'year': l[8] !== '' ? parseFloat(l[8]) : null,
+            'lat': l[1] !== '' ? parseFloat(l[1]) : null,
+            'lat-err': l[2] !== '' ? parseFloat(l[2]) : null,
+            'long': l[3] !== '' ? parseFloat(l[3]) : null,
+            'long-err': l[4] !== '' ? parseFloat(l[4]) : null,
+            'depth': l[9] !== '' ? parseFloat(l[9]) : null,
+            'depth-err': l[10] !== '' ? parseFloat(l[10]) : null,
+            'assumed': l[11] === 'Y'
+          }
+        })
+      }
       this.$refs.moonComponent.updateMoonquakeLocations(this.moonquakeLocations)
     }
   },
