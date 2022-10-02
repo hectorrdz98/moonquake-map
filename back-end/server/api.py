@@ -1,15 +1,51 @@
-from typing import Union
+from typing import Optional
 
 from fastapi import FastAPI
 
-app = FastAPI()
+import sqlite3
+import os.path
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+db_path = os.path.join(BASE_DIR, "moonquakes.db")
+
+app = FastAPI()
 
 @app.get("/")
 async def read_root():
     return {"Hello": "World!"}
 
+@app.get("/moonquakes")
+async def read_items():
+    with sqlite3.connect(db_path) as db:
+        cur = db.cursor()
+        cur.execute('SELECT * FROM moonquakes;')
+        rows = cur.fetchall()
 
-@app.get("/items/{item_id}")
-async def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
+    return rows
+
+@app.get("/moonquakes/show")
+async def read_moonquake(moonquake_id: Optional[int] = None, 
+                        type: Optional[str] = None,
+                        sub_type: Optional[str] = None,
+                        year: Optional[str] = None,
+                        ):
+    query = 'SELECT * FROM moonquakes WHERE 1 = 1 '
+
+    if moonquake_id:
+        query += f'AND id = "{moonquake_id}" '
+
+    if type:
+        query += f'AND type = "{type}" '
+    
+    if sub_type:
+        query += f'AND sub_type = "{sub_type}" '
+
+    if year:
+        query += f'AND year = "{year}" '
+
+    with sqlite3.connect(db_path) as db:
+        cur = db.cursor()
+        cur.execute(query)
+        rows = cur.fetchall()
+
+    return rows
