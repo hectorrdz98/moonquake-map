@@ -46,23 +46,22 @@
         </button>
       </div>
       <div class="absolute bottom-0 left-0 m-4 flex justify-start items-center gap-4">
-        <select @change="loadMoonquakeLocation" v-model="filters.type"
+        <select @change="filtersChanged('type')" v-model="filters.type"
           class="p-2 bg-indigo-800 text-indigo-100 font-semibold rounded-lg focus-visible:outline-0">
           <option selected :value="null">Select a type</option>
           <option value="moonquake">Moonquake</option>
           <option value="artificial-impact">Artificial Impact</option>
         </select>
-        <select @change="loadMoonquakeLocation" v-model="filters.subType"
+        <select @change="filtersChanged('subType')" v-model="filters.subType"
           class="p-2 bg-indigo-800 text-indigo-100 font-semibold rounded-lg focus-visible:outline-0">
           <option selected :value="null">Select a subtype</option>
           <option value="Shallow">Shallow</option>
           <option value="Deep">Deep</option>
         </select>
-        <select v-if="moonquakeLocations.length > 0"
-          @change="loadMoonquakeLocation" v-model="filters.year"
+        <select @change="filtersChanged('year')" v-model="filters.year"
           class="p-2 bg-indigo-800 text-indigo-100 font-semibold rounded-lg focus-visible:outline-0">
           <option selected :value="null">Select a year</option>
-          <option v-for="year in [...new Set(moonquakeLocations.map(item => item['year']))]" :value="year">{{ year }}</option>
+          <option v-for="year in [...new Set(moonquakeLocations.map(item => item['year']).sort())]" :value="year">{{ year }}</option>
         </select>
       </div>
       <transition name="fade"
@@ -280,7 +279,22 @@ export default {
       this.$refs.moonComponent.returnToWholeView()
       this.currentMoonquake = null
     },
+    async filtersChanged(type) {
+      switch (type) {
+        case 'type': {
+          this.filters.subType = null
+          this.filters.year = null
+        } break
+        case 'subType': {
+          this.filters.year = null
+        } break
+      }
+      await this.loadMoonquakeLocation()
+    },
     async loadMoonquakeLocation() {
+      if (this.currentMoonquake != null) {
+        this.closedMoonquake()
+      }
       let payload = {
         type: this.filters.type,
         sub_type: this.filters.subType,
@@ -305,8 +319,8 @@ export default {
             'depth-err': l[10] !== '' ? parseFloat(l[10]) : null,
             'assumed': l[11] === 'Y'
           })
-          this.$refs.moonComponent.updateMoonquakeLocations(this.moonquakeLocations)
         }
+        this.$refs.moonComponent.updateMoonquakeLocations(this.moonquakeLocations)
       }
     }
   },
